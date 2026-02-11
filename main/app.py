@@ -1,8 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 import threading as thr
-from data_logger import *
-import global_vars
+from main.data_logger import *
+import main.global_vars as global_vars
 
 #pip install pyserial requests if you dont have it  
 import time		 #Thingspeak
@@ -49,6 +49,31 @@ flowrate = StringVar()
 total_vol = StringVar()
 avg_flowrate = StringVar()
 create_widgets(flowrate, total_vol, avg_flowrate)
+
+#Establish database connection
+
+# Need to make an HTTP request since we are sending from Python
+# Student licenses allow a piece of data per second, might want to limit with an average per second from flowMeter.ino
+#comm = serial.serial('COM5', 115200) # Confirm com port for laptop being used since we cant send from arduino
+									 # Maybe suggest attached ESP32 or device change next semester for direct comms
+#thingspeakKey = 0E4NVRSW981M90O9	 # General API key, can be regenerated on site 
+
+#while True:							 #
+#	try:
+#		if com.in_waiting:		     #Checking Serial for data
+
+#		flowrate = ser.readline().decode('utf-8').strip()
+#        print(f"Flow Rate: {flowrate}")
+		
+#		url = 'https://api.thingspeak.com/update.json'
+#		params = {
+#			'api_key': thingspeakKey,
+#			'field1': flowrate
+#		}
+		
+#		response = requests.post(url, data=params) # System response for debugging 
+#		print(response.text)
+
 
 #Establish Thread for reading serial data
 t = thr.Thread(target=logger_loop, args=(g_lock,))
