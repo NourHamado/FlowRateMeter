@@ -2,9 +2,10 @@ import threading as thr
 import time
 import csv
 import global_vars
-import RPi.GPIO as GPIO
+import gpiozero as GPIO
+from gpiozero import DigitalInputDevice
 
-FLOW_PIN = 17        
+FLOW_PIN = 20        
 CALIBRATION_FACTOR = 1
 
 pulse_count = 0
@@ -38,9 +39,8 @@ def logger_loop(g_lock):
     t = thr.currentThread()
 
     # GPIO init
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(FLOW_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.add_event_detect(FLOW_PIN, GPIO.FALLING, callback=flow_pulse)
+    flow_sensor=DigitalInputDevice(FLOW_PIN, pull_up=True)
+    flow_sensor.when_deactivated = flow_pulse
 
     with open(CSV_FILE, 'w', newline='') as f:
         writer = csv.writer(f)
