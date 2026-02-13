@@ -1,67 +1,66 @@
-import serial
 import threading as thr
 import time
-import main.global_vars as global_vars
+import csv
+import global_vars
+from gpiozero import DigitalInputDevice
 
-#pip install pyserial requests if you dont have it  
-import time		 #Thingspeak
-import requests  #Thingspeak
+FLOW_PIN = 20        
+CALIBRATION_FACTOR = 0.54
 
-thingspeakKey = '0E4NVRSW981M90O9'
+pulse_count = 0
+start_time = time.time()
+total_ml = 0
 
-#read_data(): retrieves data from Ardiuno, updating variables
-def read_data(arduino):
-  new_data = {'flowrate': 0.0, 'total_vol': 0.0, 'avg_flowrate': 0.0, 'null_input': False}
-  
-  #read data in bytes
-  flowRate = str(arduino.readline().decode("utf-8")).rstrip()
-  if (flowRate == None or ''):
-    new_data['null_input'] = True
-  else:
-    total_vol = str(arduino.readline().decode("utf-8")).rstrip()
-    time = str(arduino.readline().decode("utf-8")).rstrip()
-    total_flow = str(arduino.readline().decode("utf-8")).rstrip()
-    #update dict with new values
-    print(flowRate)
-    new_data['flowrate'] = float(flowRate)
-    new_data['total_vol'] = float(total_vol)
-    new_data['avg_flowrate'] = float(total_flow)/float(time)
-  
-  return new_data
+CSV_FILE = "flow_data.csv"
 
-#update_globals(): once lock is aquired, allows other thread to receive new data
+def flow_pulse():
+    global pulse_count
+    pulse_count += 1
+
+
 def update_globals(g_lock, flowrate, total_vol, avg_flowrate):
-  with g_lock:
-    global_vars.g_flowrate = flowrate
-    global_vars.g_total_vol = total_vol
-    global_vars.g_avg_flowrate = avg_flowrate
+    with g_lock:
+        global_vars.g_flowrate = flowrate
+        global_vars.g_total_vol = total_vol
+        global_vars.g_avg_flowrate = avg_flowrate
 
-#update_database(): connects to Thingspeak to update it with new data
-def update_database(flowrate, total_vol, avg_flowrate):
-  #flowrate = serial.readline().decode('utf-8').strip()
-  url = 'https://api.thingspeak.com/update.json'
-  params = {
-    'api_key': thingspeakKey,
-	'field1': flowrate
-  }
-  response = requests.post(url, data=params) # System response for debugging 
-  print(response.text)
-  print(f"{flowrate} {total_vol} {avg_flowrate}")
 
-#Main Thread loop
+def write_csv(flowrate, total_vol, avg_flowrate):
+    with open(CSV_FILE, 'a', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow([time.time(), flowrate, total_vol, avg_flowrate])
+
+
 def logger_loop(g_lock):
-  #open serial port
-  t = thr.currentThread()
-  
-  #connect to the arduino on COM5
-  arduino = serial.Serial(port='COM5', baudrate=115200, timeout=.1)
+    global pulse_count, total_ml
 
-  while(getattr(t, "running", True)):
-    new_data = read_data(arduino)
-    if(new_data['null_input'] == False):
-      update_globals(g_lock, new_data['flowrate'], new_data['total_vol'], new_data['avg_flowrate'])
-      update_database(new_data['flowrate'], new_data['total_vol'], new_data['avg_flowrate'])
-    time.sleep(1) #change sleep seconds as needed
+    t = thr.currentThread()
 
-  #close serial port
-  arduino.close()
+    flow_sensor=DigitalInputDevice(FLOW_PIN, pull_up=True)
+    flow_sensor.when_activated = flow_pulse
+
+    with open(CSV_FILE, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["timestamp", "flowrate", "total_volume_ml", "avg_flowrate"])
+
+    last_time = time.time()
+
+    while getattr(t, "running", True):
+        time.sleep(5)
+
+        current_time = time.time()
+        elapsed = current_time - last_time
+
+        flowrate = (pulse_count / elapsed) / CALIBRATION_FACTOR
+        flow_ml = (flowrate / 300) * 1000
+        total_ml += flow_ml
+
+        avg_flowrate = total_ml / (current_time - start_time)
+
+        pulse_count = 0
+        last_time = current_time
+
+        update_globals(g_lock, flowrate, total_ml, avg_flowrate)
+        write_csv(flowrate, total_ml, avg_flowrate)
+        
+      flow_sensor.close()
