@@ -62,6 +62,7 @@ class DashboardPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(24),
                       ),
                       elevation: 0,
+                      shadowColor: Colors.black,
                     ),
                     child: const Text(
                       'Go to Summary',

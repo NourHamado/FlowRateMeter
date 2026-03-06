@@ -25,7 +25,7 @@ class SummaryPageState extends State<SummaryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-      decoration: const BoxDecoration(
+        decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment(0.8, 1),
@@ -113,6 +113,7 @@ class SummaryPageState extends State<SummaryPage> {
                         borderRadius: BorderRadius.circular(24),
                       ),
                       elevation: 0,
+                      shadowColor: Colors.black,
                     ),
                     child: const Text(
                       'Go to Dashboard',
@@ -128,7 +129,7 @@ class SummaryPageState extends State<SummaryPage> {
           ),
         ),
       ),
-    )
+      )
     );
   }
 
@@ -151,6 +152,13 @@ class SummaryPageState extends State<SummaryPage> {
           ],
           tileMode: TileMode.mirror,
         ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0xFFBFDBFE),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
