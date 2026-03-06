@@ -7,7 +7,19 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
       return Scaffold(
-        body: SafeArea(
+        body: Container(
+          decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment(0.8, 1),
+            colors: <Color>[
+            Color(0xFFF0F9FF),
+            Color(0xFFE0F2FE),
+            ],
+            tileMode: TileMode.mirror,
+          ),
+        ),
+        child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -64,6 +76,7 @@ class DashboardPage extends StatelessWidget {
             ),
           ),
         ),
-      );
+      )
+    );
   }
 }

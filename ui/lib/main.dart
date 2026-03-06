@@ -13,6 +13,7 @@ class FlowMeterApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flow Meter',
       home: const SummaryPage(),
     );
