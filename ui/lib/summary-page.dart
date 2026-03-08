@@ -15,7 +15,6 @@ class SummaryPageState extends State<SummaryPage> {
       super.initState();
       _updateTime();
     }
-   //testing testing 123 
 
     void _updateTime() {
       final now = DateTime.now();
