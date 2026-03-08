@@ -26,115 +26,116 @@ class SummaryPageState extends State<SummaryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        height: double.infinity,
         decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment(0.8, 1),
-          colors: <Color>[
-          Color(0xFFF0F9FF),
-          Color(0xFFE0F2FE),
-          ],
-          tileMode: TileMode.mirror,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment(0.8, 1),
+            colors: <Color>[
+            Color(0xFFF0F9FF),
+            Color(0xFFE0F2FE),
+            ],
+            tileMode: TileMode.mirror,
+          ),
         ),
-      ),
-      child: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                // Welcome heading
-                const Text(
-                  'Welcome back!',
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  // Welcome heading
+                  const Text(
+                    'Welcome back!',
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                
-                const Text(
-                  'FlowMeter Summary',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
+                  const SizedBox(height: 8),
+                  
+                  const Text(
+                    'FlowMeter Summary',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                
-                const SizedBox(height: 32),
-                
-                // Volume Card
-                _card(
-                  title: 'Volume',
-                  value: '10 mL water used',
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // Flow Rate Card
-                _card(
-                  title: 'Flow Rate',
-                  value: '0.5 mL/min',
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // Average Flow Rate Card
-                _card(
-                  title: 'Average Flow Rate',
-                  value: '0.3 mL/min',
-                ),
-                
-                const SizedBox(height: 32),
+                  const SizedBox(height: 4),
+                  
+                  const SizedBox(height: 32),
+                  
+                  // Volume Card
+                  summaryCard(
+                    title: 'Volume',
+                    value: '10 mL water used',
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Flow Rate Card
+                  summaryCard(
+                    title: 'Flow Rate',
+                    value: '0.5 mL/min',
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Average Flow Rate Card
+                  summaryCard(
+                    title: 'Average Flow Rate',
+                    value: '0.3 mL/min',
+                  ),
+                  
+                  const SizedBox(height: 32),
 
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DashboardPage(),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const DashboardPage(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF3B82F6),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 16,
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF3B82F6),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 16,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        elevation: 0,
+                        shadowColor: Colors.black,
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      elevation: 0,
-                      shadowColor: Colors.black,
-                    ),
-                    child: const Text(
-                      'Go to Dashboard',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w300,
+                      child: const Text(
+                        'Go to Dashboard',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w300,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
       )
     );
   }
 
-  Widget _card({
+  Widget summaryCard({
     required String title,
     required String value,
     // add icon later
