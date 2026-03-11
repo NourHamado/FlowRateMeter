@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dashboard.dart';
+import 'flow-meter-data-model.dart';
+import 'package:csv/csv.dart'; 
+import 'package:intl/intl.dart';
+
 
 class SummaryPage extends StatefulWidget {
   const SummaryPage({super.key});
@@ -9,20 +14,43 @@ class SummaryPage extends StatefulWidget {
 }
 
 class SummaryPageState extends State<SummaryPage> {
+  FlowMeterData? retrievedData;
 
     @override
     void initState() {
       super.initState();
-      _updateTime();
+      _loadData();
     }
 
-    void _updateTime() {
-      final now = DateTime.now();
-      // put it in the right format following Figma design TBD
+    void _loadData() async {
+      final data = await rootBundle.loadString('assets/flow_data.csv');
+      
+      // read csv file and convert to list
+      List<List<dynamic>> f = const CsvToListConverter().convert(data);
+      
+      // skip header
+      List<FlowMeterData> flowDataList = [];
+      for (int i = 1; i < f.length; i++) {
+        try {
+          flowDataList.add(FlowMeterData.csvToFlowData(f[i]));
+        } 
+        catch (e) {
+          continue;
+        }
+      }
+      setState(() {
+        if (flowDataList.isNotEmpty) {
+          retrievedData = flowDataList.last;
+        }
+      });
     }
 
   @override
   Widget build(BuildContext context) {
+    final data = retrievedData;
+    final updatedTime = DateFormat('h:mm a').format(data!.time).toUpperCase();
+    final updatedDate = DateFormat('MMMM d').format(data.time);
+
     return Scaffold(
       body: Container(
         height: double.infinity,
@@ -66,12 +94,20 @@ class SummaryPageState extends State<SummaryPage> {
                   ),
                   const SizedBox(height: 4),
                   
+                  Text(
+                    'Last updated on $updatedDate at $updatedTime EST',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                    ),
+                  ),
+                  
                   const SizedBox(height: 32),
                   
                   // Volume Card
                   summaryCard(
                     title: 'Volume',
-                    value: '10 mL water used',
+                    value: '${data.totalVolume} mL water used',
                   ),
                   
                   const SizedBox(height: 16),
@@ -79,7 +115,7 @@ class SummaryPageState extends State<SummaryPage> {
                   // Flow Rate Card
                   summaryCard(
                     title: 'Flow Rate',
-                    value: '0.5 mL/min',
+                    value: '${data.flowRate} mL/min',
                   ),
                   
                   const SizedBox(height: 16),
@@ -87,7 +123,7 @@ class SummaryPageState extends State<SummaryPage> {
                   // Average Flow Rate Card
                   summaryCard(
                     title: 'Average Flow Rate',
-                    value: '0.3 mL/min',
+                    value: '${data.avgFlowRate} mL/min',
                   ),
                   
                   const SizedBox(height: 32),
