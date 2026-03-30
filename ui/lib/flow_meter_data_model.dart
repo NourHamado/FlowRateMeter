@@ -11,12 +11,12 @@ class FlowMeterData {
     required this.avgFlowRate,
   });
 
-  factory FlowMeterData.csvToFlowData(List<dynamic> r) {
+  factory FlowMeterData.fromJson(Map<String,dynamic> r) {
     return FlowMeterData(
-      time: DateTime.parse(r[0]),
-      flowRate: double.parse(r[1].toString()),
-      totalVolume: double.parse(r[2].toString()),
-      avgFlowRate: double.parse(r[3].toString()),
+      time: DateTime.parse(r['time']),
+      flowRate: double.parse(r['flowRate'].toString()),
+      totalVolume: double.parse(r['totalVolume'].toString()),
+      avgFlowRate: double.parse(r['avgFlowRate'].toString()),
     );
   }
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dashboard.dart';
-import 'flow-meter-data-model.dart';
-import 'package:csv/csv.dart'; 
+import 'API_flask.dart';
+import 'flow_meter_data_model.dart';
 import 'package:intl/intl.dart';
 
 
@@ -15,6 +14,7 @@ class SummaryPage extends StatefulWidget {
 
 class SummaryPageState extends State<SummaryPage> {
   FlowMeterData? retrievedData;
+  List<FlowMeterData> flowDataList = [];
 
     @override
     void initState() {
@@ -23,25 +23,15 @@ class SummaryPageState extends State<SummaryPage> {
     }
 
     void _loadData() async {
-      final data = await rootBundle.loadString('assets/flow_data.csv');
-      
-      // read csv file and convert to list
-      List<List<dynamic>> f = const CsvToListConverter().convert(data);
-      
-      // skip header
-      List<FlowMeterData> flowDataList = [];
-      for (int i = 1; i < f.length; i++) {
-        try {
-          flowDataList.add(FlowMeterData.csvToFlowData(f[i]));
-        } 
-        catch (e) {
-          continue;
-        }
+      try {
+        final api = FlowApi();
+        final flowDataList = await api.fetchLive();
+      } 
+      catch (e) {
+        print('Error fetching data: $e');
       }
       setState(() {
-        if (flowDataList.isNotEmpty) {
-          retrievedData = flowDataList.last;
-        }
+        retrievedData = flowDataList.isNotEmpty ? flowDataList.first : null;
       });
     }
 

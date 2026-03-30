@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'summary-page.dart';
-import 'flow-meter-data-model.dart';
-import 'package:csv/csv.dart'; 
+import 'summary_page.dart';
+import 'API_flask.dart';
+import 'flow_meter_data_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 
@@ -16,6 +15,7 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   String timeFilter = 'Weekly';
   List<FlowMeterData> retrievedData = [];
+   List<FlowMeterData> flowDataList = [];
   
   @override
   void initState() {
@@ -24,23 +24,15 @@ class _DashboardPageState extends State<DashboardPage> {
   }
   
   void _loadData() async {
-      final data = await rootBundle.loadString('assets/flow_data.csv');
-      
-      // read csv file and convert to list
-      List<List<dynamic>> f = const CsvToListConverter().convert(data);
-      
-      // skip header
-      List<FlowMeterData> flowDataList = [];
-      for (int i = 1; i < f.length; i++) {
-        try {
-          flowDataList.add(FlowMeterData.csvToFlowData(f[i]));
-        } 
-        catch (e) {
-          continue;
-        }
+      try {
+        final api = FlowApi();
+        flowDataList = await api.fetchHistory();
+      } 
+      catch (e) {
+        print('Error fetching data: $e');
       }
       setState(() {
-        retrievedData = flowDataList;
+        retrievedData = flowDataList.isNotEmpty ? flowDataList : [];
       });
   }
   
