@@ -69,10 +69,13 @@ class _DashboardPageState extends State<DashboardPage> {
       switch (metric) {
         case 'totalVolume':
           weeklyData[day]?.add(data.totalVolume);
+          break;
         case 'flowRate':
           weeklyData[day]?.add(data.flowRate);
+          break;
         case 'avgFlowRate':
           weeklyData[day]?.add(data.avgFlowRate);
+          break;
       }
     }
     
@@ -106,10 +109,13 @@ class _DashboardPageState extends State<DashboardPage> {
         switch (metric) {
           case 'totalVolume':
             monthlyData[day]?.add(data.totalVolume);
+            break;
           case 'flowRate':
             monthlyData[day]?.add(data.flowRate);
+            break;
           case 'avgFlowRate':
             monthlyData[day]?.add(data.avgFlowRate);
+            break;
         }
       }
     }
@@ -139,10 +145,13 @@ class _DashboardPageState extends State<DashboardPage> {
       switch (metric) {
         case 'totalVolume':
           yearlyData[month]?.add(data.totalVolume);
+          break;
         case 'flowRate':
           yearlyData[month]?.add(data.flowRate);
+          break;
         case 'avgFlowRate':
           yearlyData[month]?.add(data.avgFlowRate);
+          break;
       }
     }
     

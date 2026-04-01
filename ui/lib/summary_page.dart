@@ -14,7 +14,6 @@ class SummaryPage extends StatefulWidget {
 
 class SummaryPageState extends State<SummaryPage> {
   FlowMeterData? retrievedData;
-  List<FlowMeterData> flowDataList = [];
   bool isLoading = true;
 
     @override
@@ -26,16 +25,18 @@ class SummaryPageState extends State<SummaryPage> {
     void _loadData() async {
       try {
         final api = FlowApi();
-        final flowDataList = await api.fetchLive();
+        final liveData = await api.fetchLive();
+        setState(() {
+          retrievedData = liveData;
+          isLoading = false;
+        });
       } 
       catch (e) {
         print('Error fetching data: $e');
-        isLoading = false;
+        setState(() {
+          isLoading = false;
+        });
       }
-      setState(() {
-        retrievedData = flowDataList.isNotEmpty ? flowDataList.first : null;
-        isLoading = false;
-      });
     }
 
   @override

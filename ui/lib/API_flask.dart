@@ -3,10 +3,14 @@ import 'package:http/http.dart' as http;
 import 'flow_meter_data_model.dart';
 
 class FlowApi {
-  final String ipAdress = '10.99.16.169'; // Replace with your Flask server's IP address
-  
+  final String ipAddress;
+
+  FlowApi({String? ipAddress})
+      : ipAddress = ipAddress ??
+            const String.fromEnvironment('FLASK_SERVER_IP', defaultValue: '10.99.16.169');
+
   Future<List<FlowMeterData>> fetchHistory() async {
-    final response = await http.get(Uri.parse('http://$ipAdress:5000/history'));
+    final response = await http.get(Uri.parse('http://$ipAddress:5000/history'));
 
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
@@ -16,12 +20,15 @@ class FlowApi {
       throw Exception('Failed to load data');
     }
   }
-  Future<List<FlowMeterData>> fetchLive() async {
-    final response = await http.get(Uri.parse('http://$ipAdress:5000/live'));
+  Future<FlowMeterData?> fetchLive() async {
+    final response = await http.get(Uri.parse('http://$ipAddress:5000/live'));
 
     if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
-        return (jsonData as List).map((e) => FlowMeterData.fromJson(e)).toList();
+        if (jsonData is Map<String, dynamic>) {
+          return FlowMeterData.fromJson(jsonData);
+        }
+        return null;
 
     } else {
       throw Exception('Failed to load data');
