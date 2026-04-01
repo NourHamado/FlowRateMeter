@@ -15,6 +15,7 @@ class SummaryPage extends StatefulWidget {
 class SummaryPageState extends State<SummaryPage> {
   FlowMeterData? retrievedData;
   List<FlowMeterData> flowDataList = [];
+  bool isLoading = true;
 
     @override
     void initState() {
@@ -29,14 +30,79 @@ class SummaryPageState extends State<SummaryPage> {
       } 
       catch (e) {
         print('Error fetching data: $e');
+        isLoading = false;
       }
       setState(() {
         retrievedData = flowDataList.isNotEmpty ? flowDataList.first : null;
+        isLoading = false;
       });
     }
 
   @override
   Widget build(BuildContext context) {
+    // check if loading
+    if (isLoading) {
+      return Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment(0.8, 1),
+              colors: <Color>[
+                Color(0xFFF0F9FF),
+                Color(0xFFE0F2FE),
+              ],
+              tileMode: TileMode.mirror,
+            ),
+          ),
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
+    // Check if data is null
+    if (retrievedData == null) {
+      return Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment(0.8, 1),
+              colors: <Color>[
+                Color(0xFFF0F9FF),
+                Color(0xFFE0F2FE),
+              ],
+              tileMode: TileMode.mirror,
+            ),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 16),
+                const Text(
+                  'No data available',
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    _loadData();
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     final data = retrievedData;
     final updatedTime = DateFormat('h:mm a').format(data!.time).toUpperCase();
     final updatedDate = DateFormat('MMMM d').format(data.time);
