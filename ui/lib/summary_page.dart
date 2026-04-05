@@ -165,6 +165,12 @@ class SummaryPageState extends State<SummaryPage> {
                   summaryCard(
                     title: 'Volume',
                     value: '${data.totalVolume} mL water used',
+                    trailing: Image.asset(
+                      'assets/waterDroplets.png',
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                   
                   const SizedBox(height: 16),
@@ -227,22 +233,22 @@ class SummaryPageState extends State<SummaryPage> {
     );
   }
 
-  Widget summaryCard({
+
+    Widget summaryCard({
     required String title,
     required String value,
-    // add icon later
-  }) 
-  {
+    Widget? trailing,
+  }) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: <Color>[
-          Color(0xFFDBEAFE),
-          Color(0xFFBFDBFE),
+            Color(0xFFDBEAFE),
+            Color(0xFFBFDBFE),
           ],
           tileMode: TileMode.mirror,
         ),
@@ -257,7 +263,9 @@ class SummaryPageState extends State<SummaryPage> {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // Left: text
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -279,8 +287,14 @@ class SummaryPageState extends State<SummaryPage> {
               ),
             ],
           ),
+
+          // Right: optional trailing widget
+          if (trailing != null) ...[
+            const SizedBox(width: 12),
+            trailing,
+          ],
         ],
       ),
     );
-  }
+  } 
 }
