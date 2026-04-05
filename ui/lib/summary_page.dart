@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dashboard.dart';
-import 'API_flask.dart';
+import 'api_flask.dart';
 import 'flow_meter_data_model.dart';
 import 'package:intl/intl.dart';
 
@@ -32,7 +32,7 @@ class SummaryPageState extends State<SummaryPage> {
         });
       } 
       catch (e) {
-        print('Error fetching data: $e');
+        debugPrint('Error fetching data: $e');
         setState(() {
           isLoading = false;
         });

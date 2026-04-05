@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'summary_page.dart';
 
-
 void main() {
   runApp(const FlowMeterApp());
 }

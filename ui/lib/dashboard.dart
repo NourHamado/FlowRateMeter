@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'summary_page.dart';
-import 'API_flask.dart';
+import 'api_flask.dart';
 import 'flow_meter_data_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -29,7 +29,7 @@ class _DashboardPageState extends State<DashboardPage> {
         flowDataList = await api.fetchHistory();
       } 
       catch (e) {
-        print('Error fetching data: $e');
+        debugPrint('Error fetching data: $e');
       }
       setState(() {
         retrievedData = flowDataList.isNotEmpty ? flowDataList : [];
