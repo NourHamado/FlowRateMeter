@@ -4,7 +4,6 @@ import 'api_flask.dart';
 import 'flow_meter_data_model.dart';
 import 'package:intl/intl.dart';
 
-
 class SummaryPage extends StatefulWidget {
   const SummaryPage({super.key});
 
@@ -16,28 +15,27 @@ class SummaryPageState extends State<SummaryPage> {
   FlowMeterData? retrievedData;
   bool isLoading = true;
 
-    @override
-    void initState() {
-      super.initState();
-      _loadData();
-    }
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
 
-    void _loadData() async {
-      try {
-        final api = FlowApi();
-        final liveData = await api.fetchLive();
-        setState(() {
-          retrievedData = liveData;
-          isLoading = false;
-        });
-      } 
-      catch (e) {
-        debugPrint('Error fetching data: $e');
-        setState(() {
-          isLoading = false;
-        });
-      }
+  void _loadData() async {
+    try {
+      final api = FlowApi();
+      final liveData = await api.fetchLive();
+      setState(() {
+        retrievedData = liveData;
+        isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,16 +47,11 @@ class SummaryPageState extends State<SummaryPage> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment(0.8, 1),
-              colors: <Color>[
-                Color(0xFFF0F9FF),
-                Color(0xFFE0F2FE),
-              ],
+              colors: <Color>[Color(0xFFF0F9FF), Color(0xFFE0F2FE)],
               tileMode: TileMode.mirror,
             ),
           ),
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: const Center(child: CircularProgressIndicator()),
         ),
       );
     }
@@ -71,10 +64,7 @@ class SummaryPageState extends State<SummaryPage> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment(0.8, 1),
-              colors: <Color>[
-                Color(0xFFF0F9FF),
-                Color(0xFFE0F2FE),
-              ],
+              colors: <Color>[Color(0xFFF0F9FF), Color(0xFFE0F2FE)],
               tileMode: TileMode.mirror,
             ),
           ),
@@ -83,10 +73,7 @@ class SummaryPageState extends State<SummaryPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 16),
-                const Text(
-                  'No data available',
-                  style: TextStyle(fontSize: 16),
-                ),
+                const Text('No data available', style: TextStyle(fontSize: 16)),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
@@ -115,10 +102,7 @@ class SummaryPageState extends State<SummaryPage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment(0.8, 1),
-            colors: <Color>[
-            Color(0xFFF0F9FF),
-            Color(0xFFE0F2FE),
-            ],
+            colors: <Color>[Color(0xFFF0F9FF), Color(0xFFE0F2FE)],
             tileMode: TileMode.mirror,
           ),
         ),
@@ -140,7 +124,7 @@ class SummaryPageState extends State<SummaryPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
+
                   const Text(
                     'FlowMeter Summary',
                     style: TextStyle(
@@ -150,17 +134,14 @@ class SummaryPageState extends State<SummaryPage> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  
+
                   Text(
                     'Last updated on $updatedDate at $updatedTime EST',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                    ),
+                    style: const TextStyle(fontSize: 20, color: Colors.black),
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Volume Card
                   summaryCard(
                     title: 'Volume',
@@ -172,27 +153,27 @@ class SummaryPageState extends State<SummaryPage> {
                       fit: BoxFit.contain,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Flow Rate Card
                   summaryCard(
                     title: 'Flow Rate',
                     value: '${data.flowRate} mL/min',
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Average Flow Rate Card
                   summaryCard(
                     title: 'Average Flow Rate',
                     value: '${data.avgFlowRate} mL/min',
                   ),
-                  
-                  const SizedBox(height: 32),
 
-                  Align(
-                    alignment: Alignment.bottomCenter,
+                  const SizedBox(height: 32),
+                  // Go to Dashboard Button
+                  Container(
+                    alignment: Alignment.center,
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.push(
@@ -224,17 +205,82 @@ class SummaryPageState extends State<SummaryPage> {
                       ),
                     ),
                   ),
+
+                  const SizedBox(height: 16),
+
+                  // settings and home buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Home Button
+                      Container(
+                        alignment: Alignment.bottomLeft,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Navigate to home page
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              255,
+                              255,
+                              255,
+                            ),
+                            foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            elevation: 0,
+                            shadowColor: Colors.black,
+                          ),
+                          child: const Icon(Icons.home, size: 24),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Settings Button
+                      Container(
+                        alignment: Alignment.bottomRight,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Navigate to settings page
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              255,
+                              255,
+                              255,
+                            ),
+                            foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            elevation: 0,
+                            shadowColor: Colors.black,
+                          ),
+                          child: const Icon(Icons.settings, size: 24),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
           ),
         ),
-      )
+      ),
     );
   }
 
-
-    Widget summaryCard({
+  Widget summaryCard({
     required String title,
     required String value,
     Widget? trailing,
@@ -246,10 +292,7 @@ class SummaryPageState extends State<SummaryPage> {
         gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: <Color>[
-            Color(0xFFDBEAFE),
-            Color(0xFFBFDBFE),
-          ],
+          colors: <Color>[Color(0xFFDBEAFE), Color(0xFFBFDBFE)],
           tileMode: TileMode.mirror,
         ),
         boxShadow: const [
@@ -280,21 +323,15 @@ class SummaryPageState extends State<SummaryPage> {
               const SizedBox(height: 8),
               Text(
                 value,
-                style: const TextStyle(
-                  fontSize: 20,
-                  color: Color(0xFF4B5563),
-                ),
+                style: const TextStyle(fontSize: 20, color: Color(0xFF4B5563)),
               ),
             ],
           ),
 
           // Right: optional trailing widget
-          if (trailing != null) ...[
-            const SizedBox(width: 12),
-            trailing,
-          ],
+          if (trailing != null) ...[const SizedBox(width: 12), trailing],
         ],
       ),
     );
-  } 
+  }
 }

@@ -4,7 +4,6 @@ import 'api_flask.dart';
 import 'flow_meter_data_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
@@ -15,31 +14,30 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   String timeFilter = 'Weekly';
   List<FlowMeterData> retrievedData = [];
-   List<FlowMeterData> flowDataList = [];
-  
+  List<FlowMeterData> flowDataList = [];
+
   @override
   void initState() {
     super.initState();
     _loadData();
   }
-  
+
   void _loadData() async {
-      try {
-        final api = FlowApi();
-        flowDataList = await api.fetchHistory();
-      } 
-      catch (e) {
-        debugPrint('Error fetching data: $e');
-      }
-      setState(() {
-        retrievedData = flowDataList.isNotEmpty ? flowDataList : [];
-      });
+    try {
+      final api = FlowApi();
+      flowDataList = await api.fetchHistory();
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+    }
+    setState(() {
+      retrievedData = flowDataList.isNotEmpty ? flowDataList : [];
+    });
   }
-  
+
   // Get data based on time filter
   List<FlSpot> getGraphData(String metric) {
     if (retrievedData.isEmpty) return [];
-    
+
     switch (timeFilter) {
       case 'Weekly':
         return getWeeklyData(metric);
@@ -51,7 +49,7 @@ class _DashboardPageState extends State<DashboardPage> {
         return [];
     }
   }
-  
+
   List<FlSpot> getWeeklyData(String metric) {
     Map<int, List<double>> weeklyData = {
       1: [], // Monday
@@ -62,9 +60,9 @@ class _DashboardPageState extends State<DashboardPage> {
       6: [], // Saturday
       7: [], // Sunday
     };
-    
+
     for (var data in retrievedData) {
-      int day = data.time.weekday; 
+      int day = data.time.weekday;
 
       switch (metric) {
         case 'totalVolume':
@@ -78,12 +76,13 @@ class _DashboardPageState extends State<DashboardPage> {
           break;
       }
     }
-    
+
     // Calculate average for each day
     List<FlSpot> dataPoints = [];
     for (int i = 1; i <= 7; i++) {
       if (weeklyData[i]!.isNotEmpty) {
-        double avg = weeklyData[i]!.reduce((a, b) => a + b) / weeklyData[i]!.length;
+        double avg =
+            weeklyData[i]!.reduce((a, b) => a + b) / weeklyData[i]!.length;
         dataPoints.add(FlSpot((i - 1).toDouble(), avg));
       } else {
         dataPoints.add(FlSpot((i - 1).toDouble(), 0));
@@ -91,17 +90,18 @@ class _DashboardPageState extends State<DashboardPage> {
     }
     return dataPoints;
   }
-  
+
   List<FlSpot> getMonthlyData(String metric) {
     if (retrievedData.isEmpty) return [];
-    
+
     DateTime endDate = retrievedData.last.time;
     DateTime startDate = endDate.subtract(const Duration(days: 29));
-    
+
     Map<int, List<double>> monthlyData = {};
-    
+
     for (var data in retrievedData) {
-      if (data.time.isAfter(startDate) && data.time.isBefore(endDate.add(const Duration(days: 1)))) {
+      if (data.time.isAfter(startDate) &&
+          data.time.isBefore(endDate.add(const Duration(days: 1)))) {
         int day = data.time.difference(startDate).inDays;
         if (!monthlyData.containsKey(day)) {
           monthlyData[day] = [];
@@ -119,11 +119,12 @@ class _DashboardPageState extends State<DashboardPage> {
         }
       }
     }
-    
+
     List<FlSpot> dataPoints = [];
     for (int i = 0; i < 30; i++) {
       if (monthlyData[i] != null && monthlyData[i]!.isNotEmpty) {
-        double avg = monthlyData[i]!.reduce((a, b) => a + b) / monthlyData[i]!.length;
+        double avg =
+            monthlyData[i]!.reduce((a, b) => a + b) / monthlyData[i]!.length;
         dataPoints.add(FlSpot(i.toDouble(), avg));
       } else {
         dataPoints.add(FlSpot(i.toDouble(), 0));
@@ -131,14 +132,14 @@ class _DashboardPageState extends State<DashboardPage> {
     }
     return dataPoints;
   }
-  
+
   List<FlSpot> getYearlyData(String metric) {
     Map<int, List<double>> yearlyData = {};
-    
+
     for (int i = 0; i < 12; i++) {
       yearlyData[i] = [];
     }
-    
+
     for (var data in retrievedData) {
       int month = data.time.month - 1;
 
@@ -154,11 +155,12 @@ class _DashboardPageState extends State<DashboardPage> {
           break;
       }
     }
-    
+
     List<FlSpot> dataPoints = [];
     for (int i = 0; i < 12; i++) {
       if (yearlyData[i]!.isNotEmpty) {
-        double avg = yearlyData[i]!.reduce((a, b) => a + b) / yearlyData[i]!.length;
+        double avg =
+            yearlyData[i]!.reduce((a, b) => a + b) / yearlyData[i]!.length;
         dataPoints.add(FlSpot(i.toDouble(), avg));
       } else {
         dataPoints.add(FlSpot(i.toDouble(), 0));
@@ -166,7 +168,7 @@ class _DashboardPageState extends State<DashboardPage> {
     }
     return dataPoints;
   }
-  
+
   // x axis labels based on time filter
   String getXLabel(double x) {
     switch (timeFilter) {
@@ -177,13 +179,26 @@ class _DashboardPageState extends State<DashboardPage> {
         int day = x.toInt() + 1;
         return day % 5 == 0 || day == 1 ? day.toString() : '';
       case 'Yearly':
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const months = [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
+        ];
         return x.toInt() < months.length ? months[x.toInt()] : '';
       default:
         return '';
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -193,10 +208,7 @@ class _DashboardPageState extends State<DashboardPage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment(0.8, 1),
-            colors: <Color>[
-              Color(0xFFF0F9FF),
-              Color(0xFFE0F2FE),
-            ],
+            colors: <Color>[Color(0xFFF0F9FF), Color(0xFFE0F2FE)],
             tileMode: TileMode.mirror,
           ),
         ),
@@ -234,7 +246,6 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
 
-
               // Graph section
               Expanded(
                 child: SingleChildScrollView(
@@ -266,43 +277,116 @@ class _DashboardPageState extends State<DashboardPage> {
                       const SizedBox(height: 16),
 
                       // Go to Summary Button
-
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SummaryPage(),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SummaryPage(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFABC9F9),
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 32,
+                              vertical: 16,
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFABC9F9),
-                          foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 32,
-                            vertical: 16,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            elevation: 0,
+                            shadowColor: Colors.black,
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
+                          child: const Text(
+                            'Go to Summary',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w300,
+                            ),
                           ),
-                          elevation: 0,
-                          shadowColor: Colors.black,
-                        ),
-                        child: const Text(
-                          'Go to Summary',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
                         ),
                       ),
-                      
+
                       const SizedBox(height: 16),
-                    ]
+
+                      // settings and home buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Home Button
+                          Container(
+                            alignment: Alignment.bottomLeft,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // Navigate to home page
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color.fromARGB(
+                                  255,
+                                  255,
+                                  255,
+                                  255,
+                                ),
+                                foregroundColor: const Color.fromARGB(
+                                  255,
+                                  0,
+                                  0,
+                                  0,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                elevation: 0,
+                                shadowColor: Colors.black,
+                              ),
+                              child: const Icon(Icons.home, size: 24),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          // Settings Button
+                          Container(
+                            alignment: Alignment.bottomRight,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // Navigate to settings page
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color.fromARGB(
+                                  255,
+                                  255,
+                                  255,
+                                  255,
+                                ),
+                                foregroundColor: const Color.fromARGB(
+                                  255,
+                                  0,
+                                  0,
+                                  0,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                elevation: 0,
+                                shadowColor: Colors.black,
+                              ),
+                              child: const Icon(Icons.settings, size: 24),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -313,173 +397,160 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget graphCard ({
-  required String title,
-  required String metric,
-  required Color color,
+  Widget graphCard({
+    required String title,
+    required String metric,
+    required Color color,
   }) {
-  return Container(
-    height: 300,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(24),
-    ),
-    padding: const EdgeInsets.all(20),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, 
-          children: [
-            Column(
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+    return Container(
+      height: 300,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                ),
 
-                const SizedBox(height: 4),
-                
-                Row(
-                  children: [
-                    Icon(
-                      Icons.circle,
-                      size: 10,
-                      color: color,
-                    ),
-                    
-                    const SizedBox(width: 6),
-                    
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
+                  const SizedBox(height: 4),
+
+                  Row(
+                    children: [
+                      Icon(Icons.circle, size: 10, color: color),
+
+                      const SizedBox(width: 6),
+
+                      Text(
+                        title,
+                        style: TextStyle(fontSize: 14, color: Colors.black),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-                            
-            // Time filter
-            Container(
-              padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: DropdownButton<String>(
-            value: timeFilter,
-            underline: const SizedBox(),
-            icon: const Icon(
-              Icons.keyboard_arrow_down,
-                size: 20,
+                    ],
+                  ),
+                ],
               ),
-              items: ['Weekly', 'Monthly', 'Yearly'].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(
-                    value,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+
+              // Time filter
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: DropdownButton<String>(
+                  value: timeFilter,
+                  underline: const SizedBox(),
+                  icon: const Icon(Icons.keyboard_arrow_down, size: 20),
+                  items: ['Weekly', 'Monthly', 'Yearly'].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (String? timeSelection) {
+                    if (timeSelection != null) {
+                      setState(() {
+                        timeFilter = timeSelection;
+                      });
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 32),
+
+          // Line Chart
+          SizedBox(
+            height: 160,
+            child: LineChart(
+              LineChartData(
+                gridData: FlGridData(drawVerticalLine: false),
+                titlesData: FlTitlesData(
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 40,
+                      getTitlesWidget: (value, meta) {
+                        return Text(
+                          value.toInt().toString(),
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                          ),
+                        );
+                      },
                     ),
                   ),
-                );
-              }).toList(),
-              onChanged: (String? timeSelection) {
-                if (timeSelection != null) {
-                  setState(() {
-                    timeFilter = timeSelection;
-                  });
-                }
-              },
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 32,
+                      interval: 1,
+                      getTitlesWidget: (value, meta) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            getXLabel(value),
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                borderData: FlBorderData(show: false),
+                minX: 0,
+                maxX: timeFilter == 'Weekly'
+                    ? 6
+                    : timeFilter == 'Monthly'
+                    ? 29
+                    : 11,
+                minY: 0,
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: getGraphData(metric),
+                    isCurved: true,
+                    color: color,
+                    barWidth: 3,
+                    isStrokeCapRound: true,
+                    dotData: FlDotData(show: false),
+                    belowBarData: BarAreaData(show: false),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
       ),
-                        
-      const SizedBox(height: 32),
-                        
-      // Line Chart
-      SizedBox(
-        height: 160,
-        child: LineChart(
-          LineChartData(
-            gridData: FlGridData(
-              drawVerticalLine: false,
-            ),
-            titlesData: FlTitlesData(
-              rightTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
-              topTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 40,
-                  getTitlesWidget: (value, meta) {
-                    return Text(
-                      value.toInt().toString(),
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                      ),
-                    );
-                  },
-                ),
-              ),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 32,
-                  interval: 1,
-                  getTitlesWidget: (value, meta) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        getXLabel(value),
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 12,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-            borderData: FlBorderData(show: false),
-            minX: 0,
-            maxX: timeFilter == 'Weekly' ? 6 : timeFilter == 'Monthly' ? 29 : 11,
-            minY: 0,
-            lineBarsData: [
-              LineChartBarData(
-                spots: getGraphData(metric),
-                isCurved: true,
-                color: color,
-                barWidth: 3,
-                isStrokeCapRound: true,
-                dotData: FlDotData(
-                  show: false,
-                ),
-                belowBarData: BarAreaData(show: false),
-              ),
-            ],
-          ),
-        ),
-      ),
-      ],
-    ),
-  );
+    );
   }
 }
