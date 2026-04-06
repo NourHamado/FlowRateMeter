@@ -206,7 +206,7 @@ class SummaryPageState extends State<SummaryPage> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 200),
 
                   // settings and home buttons
                   Row(
@@ -220,12 +220,7 @@ class SummaryPageState extends State<SummaryPage> {
                             // Navigate to home page
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(
-                              255,
-                              255,
-                              255,
-                              255,
-                            ),
+                            backgroundColor: Colors.transparent,
                             foregroundColor: const Color.fromARGB(255, 0, 0, 0),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 24,
@@ -249,12 +244,7 @@ class SummaryPageState extends State<SummaryPage> {
                             // Navigate to settings page
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(
-                              255,
-                              255,
-                              255,
-                              255,
-                            ),
+                            backgroundColor: Colors.transparent,
                             foregroundColor: const Color.fromARGB(255, 0, 0, 0),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 24,

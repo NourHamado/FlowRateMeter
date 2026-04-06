@@ -256,6 +256,12 @@ class _DashboardPageState extends State<DashboardPage> {
                         title: 'Total Volume',
                         metric: 'totalVolume',
                         color: const Color(0xFF3110EB),
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          177,
+                          175,
+                          175,
+                        ),
                       ),
 
                       const SizedBox(height: 16),
@@ -264,6 +270,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         title: 'Flow Rate',
                         metric: 'flowRate',
                         color: const Color(0xFF4ECDC4),
+                        backgroundColor: const Color.fromARGB(255, 92, 91, 91),
                       ),
 
                       const SizedBox(height: 16),
@@ -272,6 +279,12 @@ class _DashboardPageState extends State<DashboardPage> {
                         title: 'Average Flow Rate',
                         metric: 'avgFlowRate',
                         color: const Color(0xFFF52D11),
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          177,
+                          175,
+                          175,
+                        ),
                       ),
 
                       const SizedBox(height: 16),
@@ -325,12 +338,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 // Navigate to home page
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(
-                                  255,
-                                  255,
-                                  255,
-                                  255,
-                                ),
+                                backgroundColor: Colors.transparent,
                                 foregroundColor: const Color.fromARGB(
                                   255,
                                   0,
@@ -359,12 +367,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 // Navigate to settings page
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(
-                                  255,
-                                  255,
-                                  255,
-                                  255,
-                                ),
+                                backgroundColor: Colors.transparent,
                                 foregroundColor: const Color.fromARGB(
                                   255,
                                   0,
@@ -401,6 +404,7 @@ class _DashboardPageState extends State<DashboardPage> {
     required String title,
     required String metric,
     required Color color,
+    required Color backgroundColor,
   }) {
     return Container(
       height: 300,
@@ -546,6 +550,20 @@ class _DashboardPageState extends State<DashboardPage> {
                     belowBarData: BarAreaData(show: false),
                   ),
                 ],
+                lineTouchData: LineTouchData(
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipColor: (touchedSpot) =>
+                        backgroundColor.withAlpha(200),
+                    getTooltipItems: (touchedSpots) {
+                      return touchedSpots.map((touchedSpot) {
+                        return LineTooltipItem(
+                          '${touchedSpot.y.toStringAsFixed(2)}',
+                          TextStyle(color: color, fontWeight: FontWeight.bold),
+                        );
+                      }).toList();
+                    },
+                  ),
+                ),
               ),
             ),
           ),
