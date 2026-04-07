@@ -3,6 +3,7 @@ import 'dashboard.dart';
 import 'api_flask.dart';
 import 'flow_meter_data_model.dart';
 import 'package:intl/intl.dart';
+import 'settings_page.dart';
 
 class SummaryPage extends StatefulWidget {
   const SummaryPage({super.key});
@@ -241,7 +242,12 @@ class SummaryPageState extends State<SummaryPage> {
                         alignment: Alignment.bottomRight,
                         child: ElevatedButton(
                           onPressed: () {
-                            // Navigate to settings page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SettingsPage(),
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
