@@ -15,6 +15,7 @@ class SummaryPage extends StatefulWidget {
 class SummaryPageState extends State<SummaryPage> {
   FlowMeterData? retrievedData;
   bool isLoading = true;
+  int navIndex = 0;
 
   @override
   void initState() {
@@ -92,12 +93,57 @@ class SummaryPageState extends State<SummaryPage> {
       );
     }
 
+    final List<Widget> pages = [
+      _buildSummaryContent(),
+      const SettingsPage(),
+    ];
+
+    return Scaffold(
+      body: IndexedStack(
+        index: navIndex,
+        children: pages,
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                navItem(
+                  icon: Icons.home_rounded,
+                  label: 'Home',
+                  index: 0,
+                ),
+                navItem(
+                  icon: Icons.settings_rounded,
+                  label: 'Settings',
+                  index: 1,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSummaryContent() {
     final data = retrievedData;
     final updatedTime = DateFormat('h:mm a').format(data!.time).toUpperCase();
     final updatedDate = DateFormat('MMMM d').format(data.time);
 
-    return Scaffold(
-      body: Container(
+    return Container(
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -208,74 +254,56 @@ class SummaryPageState extends State<SummaryPage> {
                   ),
 
                   const SizedBox(height: 200),
-
-                  // settings and home buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Home Button
-                      Container(
-                        alignment: Alignment.bottomLeft,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Navigate to home page
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            foregroundColor: const Color.fromARGB(255, 0, 0, 0),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            elevation: 0,
-                            shadowColor: Colors.black,
-                          ),
-                          child: const Icon(Icons.home, size: 24),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      // Settings Button
-                      Container(
-                        alignment: Alignment.bottomRight,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SettingsPage(),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            foregroundColor: const Color.fromARGB(255, 0, 0, 0),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            elevation: 0,
-                            shadowColor: Colors.black,
-                          ),
-                          child: const Icon(Icons.settings, size: 24),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
           ),
         ),
+      );
+  }
+
+  Widget navItem({
+    required IconData icon,
+    required String label,
+    required int index,
+  }) {
+    final isSelected = navIndex == index;
+    
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          navIndex = index;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF3B82F6).withValues(alpha: 0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
+              size: 26,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-
+  
   Widget summaryCard({
     required String title,
     required String value,

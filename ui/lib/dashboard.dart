@@ -9,13 +9,14 @@ class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  State<DashboardPage> createState() => DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
+class DashboardPageState extends State<DashboardPage> {
   String timeFilter = 'Weekly';
   List<FlowMeterData> retrievedData = [];
   List<FlowMeterData> flowDataList = [];
+  int navIndex = 0;
 
   @override
   void initState() {
@@ -202,8 +203,54 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      _buildDashboardContent(),
+      const SettingsPage(),
+    ];
+
     return Scaffold(
-      body: Container(
+      body: IndexedStack(
+        index: navIndex,
+        children: pages,
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                navItem(
+                  icon: Icons.home_rounded,
+                  label: 'Home',
+                  index: 0,
+                ),
+                navItem(
+                  icon: Icons.settings_rounded,
+                  label: 'Settings',
+                  index: 1,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDashboardContent() {
+
+    return Container(
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -402,10 +449,50 @@ class _DashboardPageState extends State<DashboardPage> {
             ],
           ),
         ),
+      );  
+    }
+  Widget navItem({
+    required IconData icon,
+    required String label,
+    required int index,
+  }) {
+    final isSelected = navIndex == index;
+    
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          navIndex = index;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF3B82F6).withValues(alpha: 0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
+              size: 26,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-
+  
   Widget graphCard({
     required String title,
     required String metric,
