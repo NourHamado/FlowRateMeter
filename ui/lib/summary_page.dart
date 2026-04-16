@@ -4,6 +4,7 @@ import 'api_flask.dart';
 import 'flow_meter_data_model.dart';
 import 'package:intl/intl.dart';
 import 'settings_page.dart';
+import 'language_support.dart';
 
 class SummaryPage extends StatefulWidget {
   const SummaryPage({super.key});
@@ -41,6 +42,7 @@ class SummaryPageState extends State<SummaryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = LanguageLocalizations.of(context);
     // check if loading
     if (isLoading) {
       return Scaffold(
@@ -75,7 +77,7 @@ class SummaryPageState extends State<SummaryPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 16),
-                const Text('No data available', style: TextStyle(fontSize: 16)),
+                Text(localizations.noDataAvailable, style: const TextStyle(fontSize: 16)),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
@@ -84,7 +86,7 @@ class SummaryPageState extends State<SummaryPage> {
                     });
                     _loadData();
                   },
-                  child: const Text('Retry'),
+                  child: Text(localizations.retry),
                 ),
               ],
             ),
@@ -122,12 +124,12 @@ class SummaryPageState extends State<SummaryPage> {
               children: [
                 navItem(
                   icon: Icons.home_rounded,
-                  label: 'Home',
+                  label: localizations.home,
                   index: 0,
                 ),
                 navItem(
                   icon: Icons.settings_rounded,
-                  label: 'Settings',
+                  label: localizations.settings,
                   index: 1,
                 ),
               ],
@@ -139,6 +141,7 @@ class SummaryPageState extends State<SummaryPage> {
   }
 
   Widget _buildSummaryContent() {
+    final localizations = LanguageLocalizations.of(context);
     final data = retrievedData;
     final updatedTime = DateFormat('h:mm a').format(data!.time).toUpperCase();
     final updatedDate = DateFormat('MMMM d').format(data.time);
@@ -162,9 +165,9 @@ class SummaryPageState extends State<SummaryPage> {
                 children: [
                   const SizedBox(height: 20),
                   // Welcome heading
-                  const Text(
-                    'Welcome back!',
-                    style: TextStyle(
+                  Text(
+                    localizations.welcomeBack,
+                    style: const TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
                       letterSpacing: -0.5,
@@ -172,9 +175,9 @@ class SummaryPageState extends State<SummaryPage> {
                   ),
                   const SizedBox(height: 8),
 
-                  const Text(
-                    'FlowMeter Summary',
-                    style: TextStyle(
+                  Text(
+                    localizations.flowmeterSummary,
+                    style: const TextStyle(
                       fontSize: 20,
                       color: Colors.black,
                       fontWeight: FontWeight.w500,
@@ -183,7 +186,7 @@ class SummaryPageState extends State<SummaryPage> {
                   const SizedBox(height: 4),
 
                   Text(
-                    'Last updated on $updatedDate at $updatedTime EST',
+                    '${localizations.lastUpdated} $updatedDate ${localizations.at} $updatedTime ${localizations.est}',
                     style: const TextStyle(fontSize: 20, color: Colors.black),
                   ),
 
@@ -191,8 +194,8 @@ class SummaryPageState extends State<SummaryPage> {
 
                   // Volume Card
                   summaryCard(
-                    title: 'Volume',
-                    value: '${data.totalVolume} mL water used',
+                    title: localizations.volume,
+                    value: '${data.totalVolume} ${localizations.mlWaterUsed}',
                     trailing: Image.asset(
                       'assets/waterDroplets.png',
                       width: 80,
@@ -205,16 +208,16 @@ class SummaryPageState extends State<SummaryPage> {
 
                   // Flow Rate Card
                   summaryCard(
-                    title: 'Flow Rate',
-                    value: '${data.flowRate} mL/min',
+                    title: localizations.flowRate,
+                    value: '${data.flowRate} ${localizations.mlPerMin}',
                   ),
 
                   const SizedBox(height: 16),
 
                   // Average Flow Rate Card
                   summaryCard(
-                    title: 'Average Flow Rate',
-                    value: '${data.avgFlowRate} mL/min',
+                    title: localizations.averageFlowRate,
+                    value: '${data.avgFlowRate} ${localizations.mlPerMin}',
                   ),
 
                   const SizedBox(height: 32),
@@ -243,9 +246,9 @@ class SummaryPageState extends State<SummaryPage> {
                         elevation: 0,
                         shadowColor: Colors.black,
                       ),
-                      child: const Text(
-                        'Go to Dashboard',
-                        style: TextStyle(
+                      child: Text(
+                        localizations.goToDashboard,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w300,
                         ),

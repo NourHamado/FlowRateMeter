@@ -4,6 +4,7 @@ import 'api_flask.dart';
 import 'flow_meter_data_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'settings_page.dart';
+import 'language_support.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -13,7 +14,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class DashboardPageState extends State<DashboardPage> {
-  String timeFilter = 'Weekly';
+  String timeFilter = 'weekly';
   List<FlowMeterData> retrievedData = [];
   List<FlowMeterData> flowDataList = [];
   int navIndex = 0;
@@ -41,11 +42,11 @@ class DashboardPageState extends State<DashboardPage> {
     if (retrievedData.isEmpty) return [];
 
     switch (timeFilter) {
-      case 'Weekly':
+      case 'weekly':
         return getWeeklyData(metric);
-      case 'Monthly':
+      case 'monthly':
         return getMonthlyData(metric);
-      case 'Yearly':
+      case 'yearly':
         return getYearlyData(metric);
       default:
         return [];
@@ -174,13 +175,13 @@ class DashboardPageState extends State<DashboardPage> {
   // x axis labels based on time filter
   String getXLabel(double x) {
     switch (timeFilter) {
-      case 'Weekly':
+      case 'weekly':
         const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
         return x.toInt() < days.length ? days[x.toInt()] : '';
-      case 'Monthly':
+      case 'monthly':
         int day = x.toInt() + 1;
         return day % 5 == 0 || day == 1 ? day.toString() : '';
-      case 'Yearly':
+      case 'yearly':
         const months = [
           'Jan',
           'Feb',
@@ -232,12 +233,12 @@ class DashboardPageState extends State<DashboardPage> {
               children: [
                 navItem(
                   icon: Icons.home_rounded,
-                  label: 'Home',
+                  label: LanguageLocalizations.of(context).home,
                   index: 0,
                 ),
                 navItem(
                   icon: Icons.settings_rounded,
-                  label: 'Settings',
+                  label: LanguageLocalizations.of(context).settings,
                   index: 1,
                 ),
               ],
@@ -249,6 +250,7 @@ class DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildDashboardContent() {
+    final localizations = LanguageLocalizations.of(context);
 
     return Container(
         height: double.infinity,
@@ -271,9 +273,9 @@ class DashboardPageState extends State<DashboardPage> {
                     const SizedBox(height: 20),
 
                     // Dashboard heading
-                    const Text(
-                      'Dashboard',
-                      style: TextStyle(
+                    Text(
+                      localizations.dashboard,
+                      style: const TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
                         letterSpacing: -0.5,
@@ -282,9 +284,9 @@ class DashboardPageState extends State<DashboardPage> {
 
                     const SizedBox(height: 8),
 
-                    const Text(
-                      'FlowMeter Usage',
-                      style: TextStyle(
+                    Text(
+                      localizations.flowmeterUsage,
+                      style: const TextStyle(
                         fontSize: 20,
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
@@ -301,7 +303,7 @@ class DashboardPageState extends State<DashboardPage> {
                   child: Column(
                     children: [
                       graphCard(
-                        title: 'Total Volume',
+                        title: localizations.totalVolume,
                         metric: 'totalVolume',
                         color: const Color(0xFF3110EB),
                         backgroundColor: const Color.fromARGB(
@@ -315,7 +317,7 @@ class DashboardPageState extends State<DashboardPage> {
                       const SizedBox(height: 16),
 
                       graphCard(
-                        title: 'Flow Rate',
+                        title: localizations.flowRate,
                         metric: 'flowRate',
                         color: const Color(0xFF4ECDC4),
                         backgroundColor: const Color.fromARGB(255, 92, 91, 91),
@@ -324,7 +326,7 @@ class DashboardPageState extends State<DashboardPage> {
                       const SizedBox(height: 16),
 
                       graphCard(
-                        title: 'Average Flow Rate',
+                        title: localizations.averageFlowRate,
                         metric: 'avgFlowRate',
                         color: const Color(0xFFF52D11),
                         backgroundColor: const Color.fromARGB(
@@ -362,9 +364,9 @@ class DashboardPageState extends State<DashboardPage> {
                             elevation: 0,
                             shadowColor: Colors.black,
                           ),
-                          child: const Text(
-                            'Go to Summary',
-                            style: TextStyle(
+                          child: Text(
+                            localizations.goToSummary,
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w300,
                             ),
@@ -430,6 +432,7 @@ class DashboardPageState extends State<DashboardPage> {
     required Color color,
     required Color backgroundColor,
   }) {
+    final localizations = LanguageLocalizations.of(context);
     return Container(
       height: 300,
       decoration: BoxDecoration(
@@ -447,7 +450,7 @@ class DashboardPageState extends State<DashboardPage> {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 4),
@@ -460,7 +463,7 @@ class DashboardPageState extends State<DashboardPage> {
 
                       Text(
                         title,
-                        style: TextStyle(fontSize: 14, color: Colors.black),
+                        style: const TextStyle(fontSize: 14, color: Colors.black),
                       ),
                     ],
                   ),
@@ -481,11 +484,25 @@ class DashboardPageState extends State<DashboardPage> {
                   value: timeFilter,
                   underline: const SizedBox(),
                   icon: const Icon(Icons.keyboard_arrow_down, size: 20),
-                  items: ['Weekly', 'Monthly', 'Yearly'].map((String value) {
+                  items: ['weekly','monthly','yearly'].map((String value) {
+                    String label;
+                    switch (value) {
+                      case 'weekly':
+                        label = localizations.weekly;
+                        break;
+                      case 'monthly':
+                        label = localizations.monthly;
+                        break;
+                      case 'yearly':
+                        label = localizations.yearly;
+                        break;
+                      default:
+                        label = value;
+                    }
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(
-                        value,
+                        label,
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -557,9 +574,9 @@ class DashboardPageState extends State<DashboardPage> {
                 ),
                 borderData: FlBorderData(show: false),
                 minX: 0,
-                maxX: timeFilter == 'Weekly'
+                maxX: timeFilter == 'weekly'
                     ? 6
-                    : timeFilter == 'Monthly'
+                    : timeFilter == 'monthly'
                     ? 29
                     : 11,
                 minY: 0,
