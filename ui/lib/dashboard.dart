@@ -204,16 +204,10 @@ class DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = [
-      _buildDashboardContent(),
-      const SettingsPage(),
-    ];
+    final List<Widget> pages = [_buildDashboardContent(), const SettingsPage()];
 
     return Scaffold(
-      body: IndexedStack(
-        index: navIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: navIndex, children: pages),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -253,144 +247,135 @@ class DashboardPageState extends State<DashboardPage> {
     final localizations = LanguageLocalizations.of(context);
 
     return Container(
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment(0.8, 1),
-            colors: <Color>[Color(0xFFF0F9FF), Color(0xFFE0F2FE)],
-            tileMode: TileMode.mirror,
-          ),
+      height: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment(0.8, 1),
+          colors: <Color>[Color(0xFFF0F9FF), Color(0xFFE0F2FE)],
+          tileMode: TileMode.mirror,
         ),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
+      ),
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+
+                  // Dashboard heading
+                  Text(
+                    localizations.dashboard,
+                    style: const TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Text(
+                    localizations.flowmeterUsage,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Graph section
+            Expanded(
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   children: [
-                    const SizedBox(height: 20),
+                    graphCard(
+                      title: localizations.totalVolume,
+                      metric: 'totalVolume',
+                      color: const Color(0xFF3110EB),
+                      backgroundColor: const Color.fromARGB(255, 177, 175, 175),
+                    ),
 
-                    // Dashboard heading
-                    Text(
-                      localizations.dashboard,
-                      style: const TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
+                    const SizedBox(height: 16),
+
+                    graphCard(
+                      title: localizations.flowRate,
+                      metric: 'flowRate',
+                      color: const Color(0xFF4ECDC4),
+                      backgroundColor: const Color.fromARGB(255, 92, 91, 91),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    graphCard(
+                      title: localizations.averageFlowRate,
+                      metric: 'avgFlowRate',
+                      color: const Color(0xFFF52D11),
+                      backgroundColor: const Color.fromARGB(255, 177, 175, 175),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Go to Summary Button
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SummaryPage(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFABC9F9),
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          elevation: 0,
+                          shadowColor: Colors.black,
+                        ),
+                        child: Text(
+                          localizations.goToSummary,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
                       ),
                     ),
 
-                    const SizedBox(height: 8),
-
-                    Text(
-                      localizations.flowmeterUsage,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
-
-              // Graph section
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    children: [
-                      graphCard(
-                        title: localizations.totalVolume,
-                        metric: 'totalVolume',
-                        color: const Color(0xFF3110EB),
-                        backgroundColor: const Color.fromARGB(
-                          255,
-                          177,
-                          175,
-                          175,
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      graphCard(
-                        title: localizations.flowRate,
-                        metric: 'flowRate',
-                        color: const Color(0xFF4ECDC4),
-                        backgroundColor: const Color.fromARGB(255, 92, 91, 91),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      graphCard(
-                        title: localizations.averageFlowRate,
-                        metric: 'avgFlowRate',
-                        color: const Color(0xFFF52D11),
-                        backgroundColor: const Color.fromARGB(
-                          255,
-                          177,
-                          175,
-                          175,
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Go to Summary Button
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SummaryPage(),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFABC9F9),
-                            foregroundColor: Colors.black,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 16,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            elevation: 0,
-                            shadowColor: Colors.black,
-                          ),
-                          child: Text(
-                            localizations.goToSummary,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );  
-    }
+      ),
+    );
+  }
+
   Widget navItem({
     required IconData icon,
     required String label,
     required int index,
   }) {
     final isSelected = navIndex == index;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -400,7 +385,9 @@ class DashboardPageState extends State<DashboardPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF3B82F6).withValues(alpha: 0.1) : Colors.transparent,
+          color: isSelected
+              ? const Color(0xFF3B82F6).withValues(alpha: 0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -408,7 +395,9 @@ class DashboardPageState extends State<DashboardPage> {
           children: [
             Icon(
               icon,
-              color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
+              color: isSelected
+                  ? const Color(0xFF3B82F6)
+                  : const Color(0xFF9CA3AF),
               size: 26,
             ),
             const SizedBox(height: 4),
@@ -417,7 +406,9 @@ class DashboardPageState extends State<DashboardPage> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
+                color: isSelected
+                    ? const Color(0xFF3B82F6)
+                    : const Color(0xFF9CA3AF),
               ),
             ),
           ],
@@ -425,7 +416,7 @@ class DashboardPageState extends State<DashboardPage> {
       ),
     );
   }
-  
+
   Widget graphCard({
     required String title,
     required String metric,
@@ -450,7 +441,10 @@ class DashboardPageState extends State<DashboardPage> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
 
                   const SizedBox(height: 4),
@@ -463,7 +457,10 @@ class DashboardPageState extends State<DashboardPage> {
 
                       Text(
                         title,
-                        style: const TextStyle(fontSize: 14, color: Colors.black),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
                       ),
                     ],
                   ),
@@ -484,7 +481,7 @@ class DashboardPageState extends State<DashboardPage> {
                   value: timeFilter,
                   underline: const SizedBox(),
                   icon: const Icon(Icons.keyboard_arrow_down, size: 20),
-                  items: ['weekly','monthly','yearly'].map((String value) {
+                  items: ['weekly', 'monthly', 'yearly'].map((String value) {
                     String label;
                     switch (value) {
                       case 'weekly':
@@ -598,7 +595,7 @@ class DashboardPageState extends State<DashboardPage> {
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots.map((touchedSpot) {
                         return LineTooltipItem(
-                          '${touchedSpot.y.toStringAsFixed(2)}',
+                          touchedSpot.y.toStringAsFixed(2),
                           TextStyle(color: color, fontWeight: FontWeight.bold),
                         );
                       }).toList();
