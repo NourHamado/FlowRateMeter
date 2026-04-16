@@ -258,7 +258,7 @@ class SummaryPageState extends State<SummaryPage> {
                   ),
                 ),
 
-                const SizedBox(height: 200),
+                const SizedBox(height: 16),
               ],
             ),
           ),
