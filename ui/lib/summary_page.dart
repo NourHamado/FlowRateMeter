@@ -77,7 +77,10 @@ class SummaryPageState extends State<SummaryPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 16),
-                Text(localizations.noDataAvailable, style: const TextStyle(fontSize: 16)),
+                Text(
+                  localizations.noDataAvailable,
+                  style: const TextStyle(fontSize: 16),
+                ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
@@ -95,16 +98,10 @@ class SummaryPageState extends State<SummaryPage> {
       );
     }
 
-    final List<Widget> pages = [
-      _buildSummaryContent(),
-      const SettingsPage(),
-    ];
+    final List<Widget> pages = [_buildSummaryContent(), const SettingsPage()];
 
     return Scaffold(
-      body: IndexedStack(
-        index: navIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: navIndex, children: pages),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -144,125 +141,130 @@ class SummaryPageState extends State<SummaryPage> {
     final localizations = LanguageLocalizations.of(context);
     final data = retrievedData;
     final updatedTime = DateFormat('h:mm a').format(data!.time).toUpperCase();
-    final updatedDate = DateFormat('MMMM d').format(data.time);
+    String formatDate(BuildContext context, DateTime date) {
+      final locale = Localizations.localeOf(context).toString();
+      return DateFormat('MMMM d', locale).format(date);
+    }
+
+    final updatedDate = formatDate(context, data.time);
 
     return Container(
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment(0.8, 1),
-            colors: <Color>[Color(0xFFF0F9FF), Color(0xFFE0F2FE)],
-            tileMode: TileMode.mirror,
-          ),
+      height: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment(0.8, 1),
+          colors: <Color>[Color(0xFFF0F9FF), Color(0xFFE0F2FE)],
+          tileMode: TileMode.mirror,
         ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  // Welcome heading
-                  Text(
-                    localizations.welcomeBack,
-                    style: const TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -0.5,
-                    ),
+      ),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                // Welcome heading
+                Text(
+                  localizations.welcomeBack,
+                  style: const TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
                   ),
-                  const SizedBox(height: 8),
+                ),
+                const SizedBox(height: 8),
 
-                  Text(
-                    localizations.flowmeterSummary,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                    ),
+                Text(
+                  localizations.flowmeterSummary,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
                   ),
-                  const SizedBox(height: 4),
+                ),
+                const SizedBox(height: 4),
 
-                  Text(
-                    '${localizations.lastUpdated} $updatedDate ${localizations.at} $updatedTime ${localizations.est}',
-                    style: const TextStyle(fontSize: 20, color: Colors.black),
+                Text(
+                  '${localizations.lastUpdated} $updatedDate ${localizations.at} $updatedTime ${localizations.est}',
+                  style: const TextStyle(fontSize: 20, color: Colors.black),
+                ),
+
+                const SizedBox(height: 32),
+
+                // Volume Card
+                summaryCard(
+                  title: localizations.volume,
+                  value: '${data.totalVolume} ${localizations.mlWaterUsed}',
+                  trailing: Image.asset(
+                    'assets/waterDroplets.png',
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.contain,
                   ),
+                ),
 
-                  const SizedBox(height: 32),
+                const SizedBox(height: 16),
 
-                  // Volume Card
-                  summaryCard(
-                    title: localizations.volume,
-                    value: '${data.totalVolume} ${localizations.mlWaterUsed}',
-                    trailing: Image.asset(
-                      'assets/waterDroplets.png',
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
+                // Flow Rate Card
+                summaryCard(
+                  title: localizations.flowRate,
+                  value: '${data.flowRate} ${localizations.mlPerMin}',
+                ),
 
-                  const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-                  // Flow Rate Card
-                  summaryCard(
-                    title: localizations.flowRate,
-                    value: '${data.flowRate} ${localizations.mlPerMin}',
-                  ),
+                // Average Flow Rate Card
+                summaryCard(
+                  title: localizations.averageFlowRate,
+                  value: '${data.avgFlowRate} ${localizations.mlPerMin}',
+                ),
 
-                  const SizedBox(height: 16),
-
-                  // Average Flow Rate Card
-                  summaryCard(
-                    title: localizations.averageFlowRate,
-                    value: '${data.avgFlowRate} ${localizations.mlPerMin}',
-                  ),
-
-                  const SizedBox(height: 32),
-                  // Go to Dashboard Button
-                  Container(
-                    alignment: Alignment.center,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const DashboardPage(),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF3B82F6),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 16,
+                const SizedBox(height: 32),
+                // Go to Dashboard Button
+                Container(
+                  alignment: Alignment.center,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DashboardPage(),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        elevation: 0,
-                        shadowColor: Colors.black,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF3B82F6),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
                       ),
-                      child: Text(
-                        localizations.goToDashboard,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w300,
-                        ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      elevation: 0,
+                      shadowColor: Colors.black,
+                    ),
+                    child: Text(
+                      localizations.goToDashboard,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w300,
                       ),
                     ),
                   ),
+                ),
 
-                  const SizedBox(height: 200),
-                ],
-              ),
+                const SizedBox(height: 200),
+              ],
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 
   Widget navItem({
@@ -271,7 +273,7 @@ class SummaryPageState extends State<SummaryPage> {
     required int index,
   }) {
     final isSelected = navIndex == index;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -281,7 +283,9 @@ class SummaryPageState extends State<SummaryPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF3B82F6).withValues(alpha: 0.1) : Colors.transparent,
+          color: isSelected
+              ? const Color(0xFF3B82F6).withValues(alpha: 0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -289,7 +293,9 @@ class SummaryPageState extends State<SummaryPage> {
           children: [
             Icon(
               icon,
-              color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
+              color: isSelected
+                  ? const Color(0xFF3B82F6)
+                  : const Color(0xFF9CA3AF),
               size: 26,
             ),
             const SizedBox(height: 4),
@@ -298,7 +304,9 @@ class SummaryPageState extends State<SummaryPage> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
+                color: isSelected
+                    ? const Color(0xFF3B82F6)
+                    : const Color(0xFF9CA3AF),
               ),
             ),
           ],
@@ -306,7 +314,7 @@ class SummaryPageState extends State<SummaryPage> {
       ),
     );
   }
-  
+
   Widget summaryCard({
     required String title,
     required String value,
